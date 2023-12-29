@@ -1,0 +1,55 @@
+name: Remix Build 
+
+on:
+  push:
+    branches:
+      - main
+      - development
+      - dev
+    pull_request:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    name: Static Analysis
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Setup node
+        uses: actions/setup-node@v4
+        with: 
+          cache: npm
+          cache-dependency-path: ./package.json
+          node-version: 20
+
+      - name: Install deps
+        run: npm install
+
+      - name: Validate
+        run: npm run validate
+
+  build:
+    name: Remix build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Setup node
+        uses: actions/setup-node@v4
+        with:
+          cache: npm
+          cache-dependency-path: ./package.json
+          node-version: 20
+      
+      - name: Install deps
+        run: npm install
+
+      - name: Build
+        run: npm run build
+  
